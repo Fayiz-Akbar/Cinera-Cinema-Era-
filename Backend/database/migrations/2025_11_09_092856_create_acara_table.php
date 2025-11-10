@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('judul');
             $table->string('slug')->unique();
             $table->text('deskripsi');
-            $table->string('poster_url')->nullable(); // Path ke file gambar poster
+            $table->string('poster_url')->nullable();
             
             // Relasi inti
             $table->foreignId('id_pengaju')->constrained('pengguna')->onDelete('restrict');
@@ -27,22 +27,20 @@ return new class extends Migration
             $table->string('lokasi');
             $table->dateTime('waktu_mulai');
             $table->dateTime('waktu_selesai');
-            $table->decimal('harga', 10, 2)->default(0); // 0 untuk gratis
-            $table->string('link_pendaftaran')->nullable(); // Jika pendaftaran di luar sistem
             
-            // Kolom ini MENEGAKKAN aturan validasi Admin untuk event
+            // Kolom untuk link GForm / WA
+            $table->string('link_pendaftaran')->nullable(); 
+            
+            // Kolom validasi Admin
             $table->enum('status', ['Draft', 'Pending', 'Approved', 'Rejected', 'Published', 'Cancelled'])
                   ->default('Draft');
             
-            $table->text('catatan_admin_acara')->nullable(); // Alasan jika ditolak
+            $table->text('catatan_admin_acara')->nullable();
             
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('acara');

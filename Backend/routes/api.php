@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Import semua controller sesuai wilayah PJ
+// (Tidak masalah jika filenya belum ada, kita mendaftarkannya sekarang)
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicAcaraController;
 use App\Http\Controllers\Registration\PendaftaranController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\Submission\PenyelenggaraController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ValidasiAcaraController;
 use App\Http\Controllers\Admin\ValidasiPenyelenggaraController;
-
 
 // ===================================================================
 // == 1. RUTE PUBLIK (WILAYAH PJ 3 - Public)
@@ -70,7 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // ===================================================================
 
 // Middleware 'auth:sanctum' memastikan harus login.
-// Middleware 'admin' (yang akan kita buat) memastikan harus peran 'Admin'.
+// Middleware 'admin' (yang akan kita buat nanti) memastikan harus peran 'Admin'.
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     
     // Rute Validasi

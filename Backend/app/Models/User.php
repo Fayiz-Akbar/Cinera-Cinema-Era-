@@ -6,30 +6,36 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * Menunjuk ke tabel 'pengguna' di database.
+     */
+    protected $table = 'pengguna';
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nama',
         'email',
-        'password',
+        'kata_sandi',
+        'peran',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'kata_sandi',
         'remember_token',
     ];
 
@@ -42,7 +48,44 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'kata_sandi' => 'hashed',
         ];
+    }
+
+    /**
+     * Memberitahu Laravel untuk menggunakan 'kata_sandi' saat autentikasi.
+     */
+    public function getAuthPassword()
+    {
+        return $this->kata_sandi;
+    }
+
+    // --- DEFINISI RELASI ---
+
+    /**
+     * Relasi 1-ke-Banyak: Satu Pengguna bisa mengajukan banyak Acara.
+     */
+    public function acaraYangDiajukan()
+    {
+        return $this->hasMany(Acara::class, 'id_pengaju');
+    }
+
+    /**
+     * Relasi Banyak-ke-Banyak: Satu Pengguna bisa mengelola banyak Penyelenggara.
+     */
+    public function penyelenggaraYangDikelola()
+    {
+        return $this->belongsToMany(Penyelenggara::class, 'pengelola_penyelenggara', 'id_pengguna', 'id_penyelenggara')
+            ->withPivot('status_tautan', 'catatan_admin')
+            ->withTimestamps();
+    }
+
+    /**
+     * Relasi Banyak-ke-Banyak: Satu Pengguna bisa mendaftar ke banyak Acara.
+     */
+    public function acaraYangDidafari()
+    {
+        return $this->belongsToMany(Acara::class, 'pendaftaran_acara', 'id_pengguna', 'id_acara')
+            ->withTimestamps();
     }
 }

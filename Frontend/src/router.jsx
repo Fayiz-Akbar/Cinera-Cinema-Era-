@@ -3,7 +3,8 @@
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.jsx';
-import ProtectedRoute from './components/Common/ProtectedRoute.jsx'; // <-- IMPORT
+import ProtectedRoute from './components/Common/ProtectedRoute.jsx';
+import AdminLayout from './components/Common/AdminLayout.jsx'; // <-- IMPORT
 
 // Import Halaman
 import LoginPage from './pages/LoginPage.jsx';
@@ -12,7 +13,6 @@ import HomePage from './pages/HomePage.jsx';
 import AdminDashboardPage from './pages/Admin/AdminDashboardPage.jsx';
 import AdminKategoriPage from './pages/Admin/AdminKategoriPage.jsx';
 
-// Definisikan rute
 const router = createBrowserRouter([
   {
     element: <App />,
@@ -23,29 +23,26 @@ const router = createBrowserRouter([
       { path: '/register', element: <RegisterPage /> },
 
       // == RUTE ADMIN TERPROTEKSI (PJ 1) ==
-      // Rute ini dibungkus oleh "Pos Satpam"
       {
-        element: <ProtectedRoute adminOnly={true} />, // <-- INI SATPAMNYA
+        element: <ProtectedRoute adminOnly={true} />,
         children: [
-          // Semua halaman di sini HANYA bisa diakses Admin
+          // Gunakan AdminLayout sebagai "bungkus"
           {
-            path: '/admin/dashboard',
-            element: <AdminDashboardPage />,
-          },
-          {
-            path: '/admin/kategori',
-            element: <AdminKategoriPage />,
-          },
+            element: <AdminLayout />, // <-- BUNGKUS DENGAN LAYOUT
+            children: [
+              // Halaman-halaman ini akan muncul di <Outlet> AdminLayout
+              {
+                path: '/admin/dashboard',
+                element: <AdminDashboardPage />,
+              },
+              {
+                path: '/admin/kategori',
+                element: <AdminKategoriPage />,
+              },
+            ]
+          }
         ]
       },
-
-      // == RUTE USER BIASA TERPROTEKSI (Contoh nanti) ==
-      // {
-      //   element: <ProtectedRoute />, // Satpam (tanpa adminOnly)
-      //   children: [
-      //     { path: '/agenda-saya', element: <AgendaSayaPage /> }
-      //   ]
-      // }
     ]
   }
 ]);

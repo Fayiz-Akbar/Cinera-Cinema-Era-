@@ -27,6 +27,8 @@ class User extends Authenticatable
         'email',
         'kata_sandi',
         'peran',
+        'email_verified_at', // <-- TAMBAHKAN INI
+        'remember_token',    // <-- TAMBAHKAN INI
     ];
 
     /**

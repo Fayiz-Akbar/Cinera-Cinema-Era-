@@ -1,51 +1,51 @@
 // Frontend/src/router.jsx
+// (PJ 1 - GATEKEEPER)
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.jsx';
+import ProtectedRoute from './components/Common/ProtectedRoute.jsx'; // <-- IMPORT
 
-// Import Halaman (Masih error? Tidak apa-apa, kita akan buat filenya)
-// Wilayah PJ 2
+// Import Halaman
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
-
-// Wilayah PJ 3
 import HomePage from './pages/HomePage.jsx';
-
-// Wilayah PJ 1
 import AdminDashboardPage from './pages/Admin/AdminDashboardPage.jsx';
 import AdminKategoriPage from './pages/Admin/AdminKategoriPage.jsx';
-
 
 // Definisikan rute
 const router = createBrowserRouter([
   {
-    // Layout Induk (App.jsx)
     element: <App />,
     children: [
-      // == Rute PJ 3 (Publik) ==
+      // == Rute Publik (PJ 2 & 3) ==
+      { path: '/', element: <HomePage /> },
+      { path: '/login', element: <LoginPage /> },
+      { path: '/register', element: <RegisterPage /> },
+
+      // == RUTE ADMIN TERPROTEKSI (PJ 1) ==
+      // Rute ini dibungkus oleh "Pos Satpam"
       {
-        path: '/',
-        element: <HomePage />,
+        element: <ProtectedRoute adminOnly={true} />, // <-- INI SATPAMNYA
+        children: [
+          // Semua halaman di sini HANYA bisa diakses Admin
+          {
+            path: '/admin/dashboard',
+            element: <AdminDashboardPage />,
+          },
+          {
+            path: '/admin/kategori',
+            element: <AdminKategoriPage />,
+          },
+        ]
       },
-      // == Rute PJ 2 (Auth) ==
-      {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/register',
-        element: <RegisterPage />,
-      },
-      // == Rute PJ 1 (Admin) ==
-      {
-        path: '/admin/dashboard',
-        element: <AdminDashboardPage />,
-      },
-      {
-        path: '/admin/kategori',
-        element: <AdminKategoriPage />,
-      },
-      // ... (rute lain akan ditambah di sini)
+
+      // == RUTE USER BIASA TERPROTEKSI (Contoh nanti) ==
+      // {
+      //   element: <ProtectedRoute />, // Satpam (tanpa adminOnly)
+      //   children: [
+      //     { path: '/agenda-saya', element: <AgendaSayaPage /> }
+      //   ]
+      // }
     ]
   }
 ]);

@@ -1,27 +1,21 @@
 // Frontend/src/App.jsx
+// (PJ 1 - GATEKEEPER)
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext.jsx'; // <-- IMPORT
 
 function App() {
-  // Outlet adalah "jendela" di mana Halaman Anda
-  // (HomePage, LoginPage, AdminDashboardPage) akan muncul.
-  
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Nanti, Navbar global bisa ditaruh di sini.
-        Contoh: <Navbar /> 
-      */}
-      
-      <main>
-        {/* Render halaman yang aktif di sini */}
-        <Outlet />
-      </main>
-
-      {/* Nanti, Footer global bisa ditaruh di sini.
-        Contoh: <Footer /> 
-      */}
-    </div>
+    // "Bungkus" seluruh aplikasi dengan AuthProvider
+    <AuthProvider> 
+      <div className="min-h-screen bg-gray-100">
+        <main>
+          {/* Halaman (LoginPage, HomePage, dll) akan muncul di sini */}
+          <Outlet />
+        </main>
+      </div>
+    </AuthProvider>
   );
 }
 

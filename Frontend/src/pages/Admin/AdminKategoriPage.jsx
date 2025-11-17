@@ -1,5 +1,5 @@
 // Frontend/src/pages/Admin/AdminKategoriPage.jsx
-// (WILAYAH PJ 1)
+// (WILAYAH PJ 1) - UI sudah disesuaikan dengan tema primary
 
 import { useState, useEffect } from 'react';
 import axiosClient from '../../api/axiosClient';
@@ -86,23 +86,26 @@ export default function AdminKategoriPage() {
 
   // Tampilan JSX (HTML)
   return (
-    <div className="container mx-auto">
-      <h1 className="text-3xl font-bold">Manajemen Kategori</h1>
+    // Kita gunakan 'max-w-7xl' agar tidak terlalu lebar
+    <div className="mx-auto max-w-7xl">
+      <h1 className="text-3xl font-bold text-gray-900">Manajemen Kategori</h1>
       
       {/* 1. FORM TAMBAH KATEGORI */}
       <div className="mt-6 mb-8 rounded-lg bg-white p-6 shadow-md">
-        <h2 className="text-xl font-semibold">Tambah Kategori Baru</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Tambah Kategori Baru</h2>
         <form onSubmit={handleCreate} className="mt-4 flex space-x-4">
           <input
             type="text"
             value={newKategoriNama}
             onChange={(e) => setNewKategoriNama(e.target.value)}
             placeholder="Nama Kategori (cth: Seminar)"
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+            // --- GANTI WARNA FOKUS ---
+            className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
           />
           <button
             type="submit"
-            className="rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            // --- GANTI WARNA TOMBOL ---
+            className="rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Tambah
           </button>

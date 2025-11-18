@@ -1,17 +1,13 @@
 // Frontend/src/pages/Admin/AdminKategoriPage.jsx
-// (WILAYAH PJ 1) - UI sudah disesuaikan dengan tema primary
+// (WILAYAH PJ 1) - UI Final Sesuai Tema
 
 import { useState, useEffect } from 'react';
 import axiosClient from '../../api/axiosClient';
 
 export default function AdminKategoriPage() {
-  // State untuk menyimpan daftar kategori
   const [kategoriList, setKategoriList] = useState([]);
-  // State untuk form (Tambah Kategori Baru)
   const [newKategoriNama, setNewKategoriNama] = useState('');
-  // State untuk error
   const [error, setError] = useState(null);
-  // State untuk loading
   const [loading, setLoading] = useState(true);
 
   // --- 1. FUNGSI FETCH DATA (READ) ---
@@ -28,33 +24,27 @@ export default function AdminKategoriPage() {
     }
   };
 
-  // Panggil fetchKategori() saat komponen pertama kali dimuat
   useEffect(() => {
     fetchKategori();
-  }, []); // [] artinya hanya dijalankan sekali
+  }, []);
 
   // --- 2. FUNGSI TAMBAH DATA (CREATE) ---
   const handleCreate = async (e) => {
     e.preventDefault();
     setError(null);
-
     if (!newKategoriNama) {
       setError('Nama kategori tidak boleh kosong.');
       return;
     }
-
     try {
-      // Tembak API POST
       await axiosClient.post('/admin/kategori', {
         nama_kategori: newKategoriNama,
       });
-      // Jika berhasil, bersihkan form
       setNewKategoriNama('');
-      // Ambil ulang data dari DB agar daftar ter-update
       fetchKategori();
     } catch (err) {
       if (err.response && err.response.data.nama_kategori) {
-        setError(err.response.data.nama_kategori[0]); // Tampilkan error validasi
+        setError(err.response.data.nama_kategori[0]);
       } else {
         setError('Gagal menambah kategori.');
       }
@@ -66,11 +56,8 @@ export default function AdminKategoriPage() {
     if (!window.confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
       return;
     }
-
     try {
-      // Tembak API DELETE
       await axiosClient.delete(`/admin/kategori/${id}`);
-      // Ambil ulang data
       fetchKategori();
     } catch (err) {
       setError('Gagal menghapus kategori.');
@@ -78,6 +65,9 @@ export default function AdminKategoriPage() {
   };
 
   // --- (Fungsi UPDATE bisa ditambahkan nanti) ---
+  const handleEdit = (id) => {
+    alert(`Logika Edit untuk ID: ${id} belum dibuat.`);
+  };
 
   // Tampilan Loading
   if (loading) {
@@ -86,7 +76,7 @@ export default function AdminKategoriPage() {
 
   // Tampilan JSX (HTML)
   return (
-    // Kita gunakan 'max-w-7xl' agar tidak terlalu lebar
+    // --- PERUBAHAN UI: Ganti 'container' jadi 'max-w-7xl' ---
     <div className="mx-auto max-w-7xl">
       <h1 className="text-3xl font-bold text-gray-900">Manajemen Kategori</h1>
       
@@ -99,12 +89,12 @@ export default function AdminKategoriPage() {
             value={newKategoriNama}
             onChange={(e) => setNewKategoriNama(e.target.value)}
             placeholder="Nama Kategori (cth: Seminar)"
-            // --- GANTI WARNA FOKUS ---
+            // --- PERUBAHAN UI: Ganti 'indigo' jadi 'primary' ---
             className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
           />
           <button
             type="submit"
-            // --- GANTI WARNA TOMBOL ---
+            // --- PERUBAHAN UI: Ganti 'indigo' jadi 'primary' ---
             className="rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Tambah
@@ -140,7 +130,14 @@ export default function AdminKategoriPage() {
                     {kategori.slug}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                    {/* (Tombol Edit akan ada di sini) */}
+                    {/* --- PERUBAHAN UI: Tambah Tombol Edit --- */}
+                    <button
+                      onClick={() => handleEdit(kategori.id)}
+                      // --- Ganti 'indigo' jadi 'primary' ---
+                      className="text-primary-600 hover:text-primary-900"
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => handleDelete(kategori.id)}
                       className="ml-4 text-red-600 hover:text-red-900"

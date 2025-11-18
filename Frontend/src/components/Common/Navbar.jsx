@@ -1,74 +1,96 @@
-import { Link, NavLink } from 'react-router-dom';
+// Frontend/src/components/Common/Navbar.jsx
+// (PJ 1 - GATEKEEPER) - Navbar dengan logika Auth
+
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // Mengakses data auth
+import axiosClient from '../../api/axiosClient'; // Untuk panggil endpoint logout
+import Button from './button'; 
 
 export default function Navbar() {
-  const commonLinkClasses = "px-3 py-2 rounded-md text-sm font-medium";
-  const activeLinkClasses = "bg-unila-dark text-white";
-  const inactiveLinkClasses = "text-unila-light hover:bg-unila-dark hover:text-white";
+  // Ambil user, token, dan fungsi logout dari AuthContext
+  const { user, clearAuthData } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      // Panggil endpoint logout di Backend (yang membatalkan token/cookie)
+      await axiosClient.post('/logout');
+    } catch (e) {
+      console.error('Gagal logout di backend:', e);
+    } finally {
+      // Hapus data Auth di Frontend
+      clearAuthData();
+      navigate('/login'); // Arahkan ke halaman login
+    }
+  };
+  
+  // Tentukan rute navigasi utama
+  const navLinks = [
+      { to: '/', label: 'Event' },
+      // Tampilkan "Agenda Saya" hanya jika user sudah login
+      ...(user ? [{ to: '/agenda-saya', label: 'Agenda Saya' }] : []),
+  ];
 
   return (
-    <nav className="bg-unila-deep p-4 shadow-lg">
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Logo/Nama Proyek */}
-        <div className="flex items-center">
-          <Link to="/" className="text-white text-2xl font-bold tracking-wider">
-            UnilaFest
+    // Navbar menggunakan background putih bersih (Opsi 2)
+    <nav className="bg-white shadow-md border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16 items-center">
+          
+          {/* Logo Brand */}
+          <Link to="/" className="flex-shrink-0">
+            <span className="text-2xl font-bold text-secondary">
+              Unila<span className="text-primary">Fest</span>
+            </span>
           </Link>
-        </div>
 
-        {/* Navigasi Utama */}
-        <div className="hidden md:flex space-x-4">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive ? `${commonLinkClasses} ${activeLinkClasses}` : `${commonLinkClasses} ${inactiveLinkClasses}`
-            }
-          >
-            Beranda
-          </NavLink>
-          <NavLink
-            to="/events" // Nanti kita buat halaman ini atau pakai '/'
-            className={({ isActive }) =>
-              isActive ? `${commonLinkClasses} ${activeLinkClasses}` : `${commonLinkClasses} ${inactiveLinkClasses}`
-            }
-          >
-            Semua Acara
-          </NavLink>
-          <NavLink
-            to="/agenda-saya"
-            className={({ isActive }) =>
-              isActive ? `${commonLinkClasses} ${activeLinkClasses}` : `${commonLinkClasses} ${inactiveLinkClasses}`
-            }
-          >
-            Agenda Saya
-          </NavLink>
-          {/* Tambahkan link lain seperti "Tentang Kami", "Kontak" jika ada */}
-        </div>
+          {/* Link Navigasi Utama */}
+          <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              {navLinks.map((link) => (
+                  <Link
+                      key={link.to}
+                      to={link.to}
+                      // Gunakan kelas Amber/Primary untuk link aktif atau hover
+                      className="inline-flex items-center px-1 pt-1 text-sm font-medium text-secondary hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors"
+                  >
+                      {link.label}
+                  </Link>
+              ))}
+          </div>
 
-        {/* Tombol Login/Register atau Profil User */}
-        <div className="flex items-center space-x-4">
-          {/* Ini nanti akan diisi dengan logika autentikasi (misal: if user logged in, show profile, else show login/register) */}
-          <Link
-            to="/login"
-            className="bg-unila-dark text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-unila-extradark transition-colors"
-          >
-            Masuk
-          </Link>
-          <Link
-            to="/register"
-            className="border border-unila-dark text-unila-dark px-4 py-2 rounded-md text-sm font-medium hover:bg-unila-dark hover:text-white transition-colors"
-          >
-            Daftar
-          </Link>
+          {/* Area Akun dan Auth */}
+          <div className="flex items-center space-x-4">
+            {user ? (
+              // --- TAMPILAN JIKA SUDAH LOGIN ---
+              <div className="flex items-center space-x-4">
+                {/* Nama Pengguna / Status Akun */}
+                <span className="text-sm font-medium text-secondary">
+                  <Link 
+                    to={user.peran === 'Admin' ? '/admin/dashboard' : '/'} 
+                    className='font-bold text-primary hover:underline'
+                  >
+                    {user.nama}
+                  </Link>
+                </span>
+                
+                {/* Tombol Logout */}
+                <Button onClick={handleLogout} variant="light" className="text-sm text-secondary border border-gray-300">
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              // --- TAMPILAN JIKA BELUM LOGIN ---
+              <div className="flex items-center space-x-3">
+                <Link to="/login" className="text-sm font-medium text-secondary hover:text-primary transition-colors">
+                  Login
+                </Link>
+                <Button to="/register" as={Link} variant="primary">
+                  Daftar
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-
-        {/* Mobile menu button (akan ditambahkan nanti) */}
-        {/* <div className="md:hidden">
-          <button className="text-white">
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
-        </div> */}
       </div>
     </nav>
   );

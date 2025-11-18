@@ -1,5 +1,5 @@
 // Frontend/src/pages/Admin/AdminKategoriPage.jsx
-// (WILAYAH PJ 1) - UI Final Sesuai Tema
+// (WILAYAH PJ 1) - UI Final Sesuai Tema + Fitur EDIT/UPDATE
 
 import { useState, useEffect } from 'react';
 import axiosClient from '../../api/axiosClient';
@@ -9,6 +9,10 @@ export default function AdminKategoriPage() {
   const [newKategoriNama, setNewKategoriNama] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // State untuk Editing
+  const [editingKategoriId, setEditingKategoriId] = useState(null);
+  const [editNama, setEditNama] = useState('');
 
   // --- 1. FUNGSI FETCH DATA (READ) ---
   const fetchKategori = async () => {
@@ -16,9 +20,10 @@ export default function AdminKategoriPage() {
     try {
       const response = await axiosClient.get('/admin/kategori');
       setKategoriList(response.data);
+      setError(null);
     } catch (err) {
       setError('Gagal mengambil data kategori.');
-      console.error(err);
+      console.error("Fetch Kategori Error:", err);
     } finally {
       setLoading(false);
     }
@@ -32,13 +37,13 @@ export default function AdminKategoriPage() {
   const handleCreate = async (e) => {
     e.preventDefault();
     setError(null);
-    if (!newKategoriNama) {
+    if (!newKategoriNama.trim()) {
       setError('Nama kategori tidak boleh kosong.');
       return;
     }
     try {
       await axiosClient.post('/admin/kategori', {
-        nama_kategori: newKategoriNama,
+        nama_kategori: newKategoriNama.trim(),
       });
       setNewKategoriNama('');
       fetchKategori();
@@ -50,8 +55,46 @@ export default function AdminKategoriPage() {
       }
     }
   };
+  
+  // --- 3. FUNGSI START EDIT ---
+  const handleEdit = (kategori) => {
+    setEditingKategoriId(kategori.id);
+    setEditNama(kategori.nama_kategori);
+    setError(null);
+  };
+  
+  // --- 4. FUNGSI CANCEL EDIT ---
+  const handleCancelEdit = () => {
+    setEditingKategoriId(null);
+    setEditNama('');
+    setError(null);
+  };
 
-  // --- 3. FUNGSI HAPUS DATA (DELETE) ---
+  // --- 5. FUNGSI UPDATE DATA (UPDATE) ---
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setError(null);
+    if (!editNama.trim()) {
+      setError('Nama kategori tidak boleh kosong.');
+      return;
+    }
+    
+    try {
+      await axiosClient.put(`/admin/kategori/${editingKategoriId}`, {
+        nama_kategori: editNama.trim(),
+      });
+      fetchKategori(); // Refresh data
+      handleCancelEdit(); // Selesai editing
+    } catch (err) {
+      if (err.response && err.response.data.nama_kategori) {
+        setError(err.response.data.nama_kategori[0]);
+      } else {
+        setError('Gagal memperbarui kategori.');
+      }
+    }
+  };
+
+  // --- 6. FUNGSI HAPUS DATA (DELETE) ---
   const handleDelete = async (id) => {
     if (!window.confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
       return;
@@ -64,86 +107,112 @@ export default function AdminKategoriPage() {
     }
   };
 
-  // --- (Fungsi UPDATE bisa ditambahkan nanti) ---
-  const handleEdit = (id) => {
-    alert(`Logika Edit untuk ID: ${id} belum dibuat.`);
-  };
-
   // Tampilan Loading
   if (loading) {
-    return <div>Loading data kategori...</div>;
+    return <div className="text-lg text-primary">Sedang memuat data kategori...</div>;
   }
 
   // Tampilan JSX (HTML)
   return (
-    // --- PERUBAHAN UI: Ganti 'container' jadi 'max-w-7xl' ---
     <div className="mx-auto max-w-7xl">
-      <h1 className="text-3xl font-bold text-gray-900">Manajemen Kategori</h1>
+      <h1 className="text-3xl font-bold text-secondary">Manajemen Kategori</h1>
       
       {/* 1. FORM TAMBAH KATEGORI */}
-      <div className="mt-6 mb-8 rounded-lg bg-white p-6 shadow-md">
-        <h2 className="text-xl font-semibold text-gray-800">Tambah Kategori Baru</h2>
+      <div className="mt-6 mb-8 rounded-lg bg-white p-6 shadow-xl border-t-4 border-primary">
+        <h2 className="text-xl font-semibold text-secondary">Tambah Kategori Baru</h2>
         <form onSubmit={handleCreate} className="mt-4 flex space-x-4">
           <input
             type="text"
             value={newKategoriNama}
             onChange={(e) => setNewKategoriNama(e.target.value)}
             placeholder="Nama Kategori (cth: Seminar)"
-            // --- PERUBAHAN UI: Ganti 'indigo' jadi 'primary' ---
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
           />
           <button
             type="submit"
-            // --- PERUBAHAN UI: Ganti 'indigo' jadi 'primary' ---
-            className="rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            className="rounded-lg bg-primary px-6 py-2 text-white font-semibold shadow-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
           >
-            Tambah
+            Tambah Kategori
           </button>
         </form>
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {/* Error message untuk CREATE atau UPDATE akan muncul di sini */}
+        {error && !editingKategoriId && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
 
       {/* 2. TABEL DAFTAR KATEGORI */}
-      <div className="overflow-x-auto rounded-lg bg-white shadow-md">
+      <div className="overflow-x-auto rounded-lg bg-white shadow-xl">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-secondary">
                 Nama Kategori
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-secondary">
                 Slug
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-secondary">
                 Aksi
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {kategoriList.length > 0 ? (
               kategoriList.map((kategori) => (
-                <tr key={kategori.id}>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                    {kategori.nama_kategori}
+                <tr key={kategori.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-secondary">
+                    {editingKategoriId === kategori.id ? (
+                        // Mode Edit: Tampilkan Input
+                        <form onSubmit={handleUpdate} className="flex">
+                            <input
+                                type="text"
+                                value={editNama}
+                                onChange={(e) => setEditNama(e.target.value)}
+                                className="flex-1 rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
+                                autoFocus
+                            />
+                        </form>
+                    ) : (
+                        // Mode Normal: Tampilkan Nama
+                        kategori.nama_kategori
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                     {kategori.slug}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                    {/* --- PERUBAHAN UI: Tambah Tombol Edit --- */}
-                    <button
-                      onClick={() => handleEdit(kategori.id)}
-                      // --- Ganti 'indigo' jadi 'primary' ---
-                      className="text-primary-600 hover:text-primary-900"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(kategori.id)}
-                      className="ml-4 text-red-600 hover:text-red-900"
-                    >
-                      Hapus
-                    </button>
+                    {editingKategoriId === kategori.id ? (
+                        // Mode Edit: Tombol Simpan & Batal
+                        <>
+                            <button
+                                onClick={handleUpdate}
+                                className="text-white bg-primary px-3 py-1 rounded-md hover:bg-primary-hover mr-2 font-semibold"
+                            >
+                                Simpan
+                            </button>
+                            <button
+                                onClick={handleCancelEdit}
+                                className="text-gray-700 border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-200 font-semibold"
+                            >
+                                Batal
+                            </button>
+                        </>
+                    ) : (
+                        // Mode Normal: Tombol Edit & Hapus
+                        <>
+                            <button
+                                onClick={() => handleEdit(kategori)}
+                                className="text-primary hover:text-primary-hover mr-4 font-semibold"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                onClick={() => handleDelete(kategori.id)}
+                                className="text-red-600 hover:text-red-800 font-semibold"
+                            >
+                                Hapus
+                            </button>
+                        </>
+                    )}
                   </td>
                 </tr>
               ))
@@ -157,6 +226,9 @@ export default function AdminKategoriPage() {
           </tbody>
         </table>
       </div>
+      
+      {/* Error message khusus untuk EDIT */}
+      {error && editingKategoriId && <p className="mt-2 text-sm text-red-600 text-center">Gagal menyimpan: {error}</p>}
     </div>
   );
 }

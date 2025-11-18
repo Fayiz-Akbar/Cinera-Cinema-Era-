@@ -1,5 +1,5 @@
 // Frontend/src/components/Common/AdminLayout.jsx
-// (PJ 1 - GATEKEEPER) - Tampilan Baru (Light Theme)
+// (PJ 1 - GATEKEEPER) - Tampilan Admin Baru (Dark Sidebar)
 
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -10,10 +10,10 @@ const StyledNavLink = ({ to, children }) => (
   <NavLink
     to={to}
     className={({ isActive }) =>
-      `block rounded-md px-4 py-2.5 text-sm font-medium ${
+      `block rounded-md px-4 py-3 text-sm transition-colors duration-150 ${
         isActive
-          ? 'bg-primary-100 text-primary-600'
-          : 'text-neutral-500 hover:bg-neutral-100' // <-- GANTI KE INI
+          ? 'bg-primary-hover/50 text-white shadow-inner font-bold' // Aktif: Warna Amber redup + Teks Putih
+          : 'text-gray-300 hover:bg-secondary/70' // Tidak aktif: Abu-abu muda + Hover gelap
       }`
     }
   >
@@ -37,33 +37,35 @@ export default function AdminLayout() {
   };
 
   return (
-    // Latar belakang utama diubah jadi abu-abu muda
-    <div className="flex h-screen bg-neutral-100">
+    // Latar belakang utama (Bg konten) lebih terang
+    <div className="flex h-screen bg-gray-100">
       
-      {/* Sidebar Navigasi (Putih dengan bayangan) */}
-      <aside className="w-64 flex-shrink-0 bg-white shadow-lg">
-        <div className="flex h-full flex-col p-4">
+      {/* Sidebar Navigasi (Warna Secondary: Dark Slate) */}
+      <aside className="w-64 flex-shrink-0 bg-secondary shadow-2xl border-r border-primary/20">
+        <div className="flex h-full flex-col p-6">
           {/* Logo & User */}
-          <div>
-            <h2 className="text-xl font-bold text-neutral-800">UnilaFest Admin</h2>
-            <p className="text-sm text-neutral-500">
-              Welcome, {user?.nama || 'Admin'}
+          <div className="mb-8 border-b border-primary/30 pb-4">
+            <h2 className="text-2xl font-extrabold text-primary">
+              Admin<span className='text-white'>Fest</span>
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">
+              {user?.peran || 'Admin'} Panel: {user?.nama || 'Guest'}
             </p>
           </div>
           
           {/* Daftar Link Navigasi */}
-          <nav className="mt-8 flex-1 space-y-2">
+          <nav className="flex-1 space-y-2">
             <StyledNavLink to="/admin/dashboard">
-              Dashboard
+               Dashboard
             </StyledNavLink>
             <StyledNavLink to="/admin/kategori">
-              Manajemen Kategori
+               Manajemen Kategori
             </StyledNavLink>
             <StyledNavLink to="/admin/validasi-penyelenggara">
-              Validasi Penyelenggara
+               Validasi Penyelenggara
             </StyledNavLink>
             <StyledNavLink to="/admin/validasi-acara">
-              Validasi Acara
+               Validasi Acara
             </StyledNavLink>
           </nav>
 
@@ -71,9 +73,9 @@ export default function AdminLayout() {
           <div>
             <button
               onClick={handleLogout}
-              className="block w-full rounded-md px-4 py-2.5 text-left text-sm font-medium text-red-600 hover:bg-red-50"
+              className="block w-full rounded-md px-4 py-3 text-left text-sm font-medium text-red-400 hover:bg-red-900/50 transition-colors mt-4"
             >
-              Logout
+               Logout
             </button>
           </div>
         </div>

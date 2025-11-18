@@ -1,75 +1,90 @@
-import { Link } from 'react-router-dom';
-// --- 1. Import ikon yang kita butuhkan ---
-import { FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
+// Frontend/src/components/Common/CardAcara.jsx
+// (PJ 1 - GATEKEEPER) - Komponen Card Acara Publik
+// Menggunakan tema Amber/Primary.
 
-/**
- * Komponen Card (Kartu) yang reusable dan aesthetic
- * untuk menampilkan 1 item Acara.
- * Menerima prop 'acara' yang berisi 1 objek acara.
- */
-export default function CardAcara({ acara }) {
+import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+
+const CardAcara = ({ acara }) => {
+  if (!acara) return null;
+
+  // Helper untuk format tanggal
+  const formattedDate = (date) => {
+    return date ? format(new Date(date), 'dd MMMM yyyy') : 'Tanggal Tidak Tersedia';
+  };
   
-  // Format tanggal menjadi "18 Nov"
-  const formattedDate = new Date(acara.waktu_mulai).toLocaleDateString('id-ID', {
-    day: 'numeric',
-    month: 'short',
-  });
+  // Ambil data yang diperlukan
+  const { 
+      judul, 
+      slug, 
+      waktu_mulai, 
+      penyelenggara, 
+      kategori, 
+      lokasi, 
+      poster_url // Digunakan untuk background
+  } = acara;
 
   return (
-    // Gunakan <Link> agar seluruh kartu bisa diklik
-    <Link 
-      to={`/acara/${acara.slug}`} 
-      className="block bg-white rounded-lg shadow-lg overflow-hidden group 
-                 hover:shadow-2xl transition-all duration-300"
-    >
-      {/* Bagian Gambar/Poster */}
-      <div className="w-full h-48 bg-unila-light flex items-center justify-center overflow-hidden">
-        {acara.poster_url ? (
-          <img 
-            src={acara.poster_url} 
-            alt={acara.judul} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-          />
-        ) : (
-          <span className="text-unila-medium">Belum ada Poster</span>
-        )}
+    <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden group">
+      
+      {/* Gambar Poster/Thumbnail */}
+      <div 
+        className="h-40 bg-cover bg-center flex items-end p-3 relative"
+        style={{ 
+          backgroundImage: `url(${poster_url || 'https://via.placeholder.com/600x400?text=Poster+Segera'})`,
+          // Filter atau overlay agar teks di bawah terbaca
+          backgroundSize: 'cover'
+        }}
+      >
+        <div className="absolute inset-0 bg-secondary/30 transition-colors group-hover:bg-secondary/40"></div>
+        {/* Kategori Badge */}
+        <span className="relative z-10 text-xs font-semibold bg-primary text-white px-3 py-1 rounded-full shadow-md">
+          {kategori?.nama_kategori || 'Umum'}
+        </span>
       </div>
 
-      {/* Bagian Konten Teks */}
-      <div className="p-4">
-        {/* Badge Kategori */}
-        <span className="inline-block bg-unila-extradark text-white text-xs 
-                       font-semibold px-3 py-1 rounded-full uppercase mb-2">
-          {acara.kategori.nama_kategori}
-        </span>
-
-        {/* Judul Acara */}
-        <h3 className="text-lg font-bold text-unila-deep mb-2 truncate group-hover:text-unila-dark"
-            title={acara.judul} // Tooltip jika teks terpotong
-        >
-          {acara.judul}
-        </h3>
-
+      {/* Detail Konten */}
+      <div className="p-5">
+        
+        {/* Judul Acara (Link ke Detail Page) */}
+        <Link to={`/acara/${slug}`} className="block">
+          <h2 className="text-xl font-bold text-secondary hover:text-primary transition-colors line-clamp-2">
+            {judul}
+          </h2>
+        </Link>
+        
         {/* Penyelenggara */}
-        <p className="text-sm text-unila-medium mb-4 truncate">
-          Oleh: {acara.penyelenggara.nama_penyelenggara}
+        <p className="mt-1 text-sm text-gray-600">
+          Oleh: <span className="font-semibold text-primary">{penyelenggara?.nama_penyelenggara || 'Anonim'}</span>
         </p>
 
-        {/* --- 2. Perubahan di sini (Emoji diganti Ikon) --- */}
-        {/* Detail (Lokasi & Tanggal) */}
-        <div className="border-t border-unila-light pt-3">
-          <div className="flex items-center text-sm text-unila-dark mb-1">
-            {/* Ganti emoji 🗓️ dengan ikon */}
-            <FaCalendarAlt className="mr-2 text-unila-medium" /> 
-            <span>{formattedDate}</span>
-          </div>
-          <div className="flex items-center text-sm text-unila-dark">
-            {/* Ganti emoji 📍 dengan ikon */}
-            <FaMapMarkerAlt className="mr-2 text-unila-medium" /> 
-            <span>{acara.lokasi}</span>
-          </div>
+        <hr className="my-3 border-gray-100" />
+        
+        {/* Info Waktu & Lokasi */}
+        <div className="space-y-1 text-sm text-gray-700">
+          <p className="flex items-center">
+            <span className="mr-2 text-primary">📅</span>
+            {formattedDate(waktu_mulai)}
+          </p>
+          <p className="flex items-center">
+            <span className="mr-2 text-primary">📍</span>
+            {lokasi || 'Online/Venue'}
+          </p>
         </div>
+
+        {/* Tombol Lihat Detail */}
+        <div className="mt-5">
+          <Link
+            to={`/acara/${slug}`}
+            className="block text-center bg-gray-100 text-secondary border border-gray-200 py-2 rounded-lg font-semibold hover:bg-primary-100 hover:text-primary transition-colors"
+          >
+            Lihat Detail
+          </Link>
+        </div>
+
       </div>
-    </Link>
+    </div>
   );
-}
+};
+
+export default CardAcara;

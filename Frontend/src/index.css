@@ -1,12 +1,31 @@
 @import "tailwindcss";
 
-/* Definisikan warna custom untuk Tailwind v4 */
+/* * --- OPSI 2: THE GOLDEN SIGER (Emas & Gelap) ---
+ * Pilihan warna untuk nuansa Festival yang Elegan (Amber/Emas dan Dark Slate).
+ * Warna Primary akan menjadi Amber/Emas.
+ */
 @theme {
-  --color-unila-light: #CBC9CC;
-  --color-unila-medium: #9C90AA;
-  --color-unila: #6E6189;
-  --color-unila-dark: #443A67;
-  --color-unila-extradark: #211E46;
-  --color-unila-deep: #0A0B24;
-  --color-unila-black: #000003;
+  /* Primary Brand Color: Amber 600 (Aksen utama untuk tombol, link, dan highlight) */
+  --color-primary: #d97706; 
+  --color-primary-hover: #b45309; /* Amber 700 untuk efek hover */
+  
+  /* Secondary Color / Dark Text Color: Slate 800 (Digunakan untuk Sidebar Admin) */
+  --color-secondary: #1e293b; 
+
+  /* Light Background Color: Amber 50 (Background halaman User) */
+  --color-bg-body: #fffbeb; 
+  
+  /* Main Text Color: Stone 900 */
+  --color-text-main: #1c1917;
+
+  /* Custom shades (Amber) yang dibutuhkan oleh komponen seperti AdminLayout */
+  --color-primary-100: #fef3c7; /* Amber 100 (Untuk latar belakang elemen yang aktif/hover ringan) */
+  --color-primary-600: #d97706; /* Amber 600 (Sama dengan primary) */
+}
+
+/* Base styles untuk memastikan seluruh body menggunakan tema yang dipilih */
+body {
+  background-color: var(--color-bg-body);
+  color: var(--color-text-main);
+  /* Tambahkan font-family jika sudah didefinisikan secara global */
 }

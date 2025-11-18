@@ -57,12 +57,12 @@ export default function LoginPage() {
   };
 
   return (
-    // Mengganti background jadi unila-light
-    <div className="flex min-h-screen items-center justify-center bg-unila-light">
+    // Mengganti background dengan warna baru (bg-unila-light -> bg-bgbody)
+    <div className="flex min-h-screen items-center justify-center bg-bgbody">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        {/* Judul menggunakan unila-deep */}
-        <h2 className="text-center text-3xl font-bold text-unila-deep">
-          Login ke UnilaFest
+        {/* Judul menggunakan warna primary baru (text-unila-deep -> text-primary) */}
+        <h2 className="text-center text-3xl font-bold text-primary">
+          Login
         </h2>
         
         <form className="mt-8 space-y-6" onSubmit={onSubmit}>
@@ -80,8 +80,8 @@ export default function LoginPage() {
               name="email"
               type="email"
               required
-              // Ganti border & ring jadi unila
-              className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-unila focus:outline-none focus:ring-1 focus:ring-unila sm:text-sm"
+              // Mengganti warna focus ring & border menjadi primary
+              className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
               placeholder="Alamat Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -95,8 +95,8 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
-              // Ganti border & ring jadi unila
-              className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-unila focus:outline-none focus:ring-1 focus:ring-unila sm:text-sm"
+              // Mengganti warna focus ring & border menjadi primary
+              className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -106,8 +106,8 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              // Ganti background tombol jadi unila dan hover unila-dark
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-unila px-4 py-2 text-sm font-medium text-white hover:bg-unila-dark focus:outline-none focus:ring-2 focus:ring-unila focus:ring-offset-2 transition-colors"
+              // Mengganti warna tombol menjadi primary dan hover ke primary-hover
+              className="group relative flex w-full justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
             >
               Login
             </button>
@@ -116,8 +116,8 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-gray-600">
           Belum punya akun?{' '}
-          {/* Ganti warna link jadi unila */}
-          <Link to="/register" className="font-medium text-unila hover:text-unila-dark">
+          {/* Mengganti warna link menjadi primary */}
+          <Link to="/register" className="font-medium text-primary hover:text-primary-hover">
             Daftar di sini
           </Link>
         </p>

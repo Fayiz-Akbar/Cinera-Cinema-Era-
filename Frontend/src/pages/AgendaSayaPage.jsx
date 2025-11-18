@@ -1,36 +1,30 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom"; // <-- Import Link
-import registrationApi from "../api/registrationApi"; // <-- Import API Registrasi
+import { useNavigate } from "react-router-dom";
+import registrationApi from "../api/registrationApi";
+import AgendaSayaList from "../components/Public/AgendaSayaList"; // <-- 1. Import list baru
 
 export default function AgendaSayaPage() {
   const navigate = useNavigate();
 
-  // State untuk daftar agenda, loading, dan error
   const [agendaList, setAgendaList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // (Logika fetch data, redirect, dan error handling tetap sama persis)
   useEffect(() => {
     const fetchAgenda = async () => {
       try {
         setLoading(true);
-        // Panggil API untuk mendapatkan agenda
         const response = await registrationApi.getAgendaSaya();
-        setAgendaList(response.data); // Simpan data ke state
+        setAgendaList(response.data);
         setError(null);
       } catch (err) {
         console.error("Gagal mengambil agenda:", err);
-
-        // --- INI PENTING ---
-        // Jika error 401 (Unauthorized) atau 419 (Token Mismatch),
-        // artinya user belum login.
         if (err.response && (err.response.status === 401 || err.response.status === 419)) {
-          // Arahkan ke halaman login
           navigate("/login", {
             state: { message: "Silakan login untuk melihat agenda Anda." },
           });
         } else {
-          // Error lainnya
           setError("Gagal memuat agenda. Coba lagi nanti.");
         }
       } finally {
@@ -39,51 +33,42 @@ export default function AgendaSayaPage() {
     };
 
     fetchAgenda();
-  }, [navigate]); // 'navigate' dimasukkan sebagai dependency
+  }, [navigate]);
 
-  // Tampilkan status loading
-  if (loading) {
-    return <div>Loading agenda saya...</div>;
-  }
+  // --- 2. Logika render yang dirapikan ---
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-lg text-unila-medium">Memuat agenda Anda...</p>
+        </div>
+      );
+    }
 
-  // Tampilkan status error (selain error login)
-  if (error) {
-    return <div style={{ color: "red" }}>{error}</div>;
-  }
+    if (error) {
+      return (
+        <div className="text-center py-12 bg-red-100 text-red-700 rounded-lg">
+          {error}
+        </div>
+      );
+    }
 
-  // Tampilkan data jika sukses
+    // Gunakan AgendaSayaList untuk menampilkan data
+    return <AgendaSayaList agendaList={agendaList} />;
+  };
+
   return (
     <div>
-      <h1>Agenda Saya</h1>
-      <p>Berikut adalah semua acara yang telah Anda daftari.</p>
+      {/* --- 3. Judul Halaman yang Aesthetic --- */}
+      <h1 className="text-3xl md:text-4xl font-bold text-unila-deep mb-6 pb-4 border-b border-unila-light">
+        Agenda Saya
+      </h1>
+      <p className="text-lg text-unila-dark mb-8">
+        Berikut adalah semua acara yang telah Anda daftari.
+      </p>
 
-      {/* Nanti kita akan ganti ini dengan komponen 'AgendaSayaList.jsx' */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
-        {agendaList.length > 0 ? (
-          agendaList.map((acara) => (
-            <div
-              key={acara.id}
-              style={{ border: "1px solid #ccc", padding: "16px", width: "300px" }}
-            >
-              <h3>{acara.judul}</h3>
-              <p>
-                <strong>Kategori:</strong> {acara.kategori.nama_kategori}
-              </p>
-              <p>
-                <strong>Lokasi:</strong> {acara.lokasi}
-              </p>
-              <p>
-                <strong>Waktu:</strong>{" "}
-                {new Date(acara.waktu_mulai).toLocaleString("id-ID")}
-              </p>
-              {/* Tambahkan Link kembali ke halaman detail */}
-              <Link to={`/acara/${acara.slug}`}>Lihat Detail Acara</Link>
-            </div>
-          ))
-        ) : (
-          <p>Anda belum terdaftar di acara manapun.</p>
-        )}
-      </div>
+      {/* Render konten (Loading, Error, atau List) */}
+      {renderContent()}
     </div>
   );
 }

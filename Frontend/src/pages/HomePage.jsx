@@ -1,74 +1,74 @@
 import { useState, useEffect } from "react";
-import publicApi from "../api/publicApi"; // <-- 1. Import API kita
+import publicApi from "../api/publicApi";
+import AcaraList from "../components/Public/AcaraList"; // <-- 1. Import komponen list baru
 
 export default function HomePage() {
-  // 2. Siapkan 'state' untuk menyimpan data acara dan status loading
   const [acaraList, setAcaraList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 3. Gunakan useEffect untuk mengambil data saat komponen pertama kali di-load
+  // (Logika fetch data tetap sama)
   useEffect(() => {
     const fetchAcara = async () => {
       try {
-        setLoading(true); // Mulai loading
-        const response = await publicApi.getPublicAcara(); // Ambil data dari API
-        setAcaraList(response.data); // Simpan data ke state
-        setError(null); // Hapus error jika sukses
+        setLoading(true);
+        const response = await publicApi.getPublicAcara();
+        setAcaraList(response.data);
+        setError(null);
       } catch (err) {
         console.error("Gagal mengambil data acara:", err);
-        setError("Gagal mengambil data acara. Coba lagi nanti."); // Simpan pesan error
+        setError("Gagal mengambil data acara. Coba lagi nanti.");
       } finally {
-        setLoading(false); // Selesai loading (baik sukses atau gagal)
+        setLoading(false);
       }
     };
 
     fetchAcara();
-  }, []); // Array kosong [] berarti 'jalankan sekali saat load'
+  }, []);
 
-  // 4. Tampilkan status loading
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // --- 2. Kita buat "Hero Section" di sini ---
+  const renderHero = () => (
+    <div className="bg-unila-deep text-white rounded-lg p-8 md:p-12 mb-8 text-center shadow-xl">
+      <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
+        Temukan Acara Terbaik di Unila
+      </h1>
+      <p className="text-lg text-unila-light mb-6 max-w-2xl mx-auto">
+        Jelajahi berbagai Seminar, Lomba, dan Workshop terbaru.
+        Semua informasi terpusat di satu tempat.
+      </p>
+      {/* Nanti kita letakkan komponen SearchFilter.jsx di sini */}
+    </div>
+  );
 
-  // 5. Tampilkan status error
-  if (error) {
-    return <div style={{ color: "red" }}>{error}</div>;
-  }
+  // --- 3. Logika render utama disederhanakan ---
+  const renderContent = () => {
+    if (loading) {
+      // Tampilan loading yang lebih baik
+      return (
+        <div className="text-center py-12">
+          <p className="text-lg text-unila-medium">Memuat acara...</p>
+          {/* Anda bisa tambahkan ikon spinner di sini */}
+        </div>
+      );
+    }
 
-  // 6. Tampilkan data jika sukses
+    if (error) {
+      return (
+        <div className="text-center py-12 bg-red-100 text-red-700 rounded-lg">
+          {error}
+        </div>
+      );
+    }
+    
+    // Gunakan AcaraList untuk menampilkan data
+    return <AcaraList acaraList={acaraList} />;
+  };
+
   return (
     <div>
-      <h1>Selamat Datang di UnilaFest</h1>
-      <h2>Daftar Acara (Wilayah PJ 3)</h2>
-
-      {/* Nanti kita akan ganti ini dengan komponen 'AcaraList.jsx' */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
-        {acaraList.length > 0 ? (
-          acaraList.map((acara) => (
-            // Ini adalah 'card' sementara
-            <div
-              key={acara.id}
-              style={{ border: "1px solid #ccc", padding: "16px", width: "300px" }}
-            >
-              <h3>{acara.judul}</h3>
-              <p>
-                <strong>Penyelenggara:</strong> {acara.penyelenggara.nama_penyelenggara}
-              </p>
-              <p>
-                <strong>Kategori:</strong> {acara.kategori.nama_kategori}
-              </p>
-              <p>
-                <strong>Lokasi:</strong> {acara.lokasi}
-              </p>
-              {/* Kita akan tambahkan link ke detail page di sini nanti */}
-              <a href={`/acara/${acara.slug}`}>Lihat Detail</a>
-            </div>
-          ))
-        ) : (
-          <p>Belum ada acara yang dipublikasi.</p>
-        )}
-      </div>
+      {/* Tampilkan Hero dan Konten */}
+      {renderHero()}
+      {renderContent()}
     </div>
   );
 }

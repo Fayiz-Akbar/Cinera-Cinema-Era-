@@ -1,6 +1,9 @@
+// postcss.config.cjs
+
+// HARUS pakai 'module.exports'
 module.exports = {
   plugins: {
-    '@tailwindcss/postcss': {}, // <--- INI SOLUSINYA
+    '@tailwindcss/postcss': {},
     autoprefixer: {},
   },
-}
+};

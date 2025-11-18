@@ -7,17 +7,16 @@ import axiosClient from '../../api/axiosClient';
 
 // Komponen helper untuk NavLink agar bisa mendeteksi 'active'
 const StyledNavLink = ({ to, children }) => (
-  <NavLink
-    to={to}
-    // 'isActive' akan otomatis true jika rute ini aktif
-    className={({ isActive }) =>
-      `block rounded-md px-4 py-2.5 text-sm font-medium ${
-        isActive
-          ? 'bg-primary-100 text-primary-600' // Warna primer (biru) saat aktif
-          : 'text-gray-600 hover:bg-gray-100' // Warna abu-abu saat tidak aktif
-      }`
-    }
-  >
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      `block rounded-md px-4 py-2.5 text-sm font-medium ${
+        isActive
+          ? 'bg-primary-100 text-primary-600'
+          : 'text-neutral-500 hover:bg-neutral-100' // <-- GANTI KE INI
+      }`
+    }
+  >
     {children}
   </NavLink>
 );
@@ -39,15 +38,15 @@ export default function AdminLayout() {
 
   return (
     // Latar belakang utama diubah jadi abu-abu muda
-    <div className="flex h-screen bg-slate-100">
+    <div className="flex h-screen bg-neutral-100">
       
       {/* Sidebar Navigasi (Putih dengan bayangan) */}
       <aside className="w-64 flex-shrink-0 bg-white shadow-lg">
         <div className="flex h-full flex-col p-4">
           {/* Logo & User */}
           <div>
-            <h2 className="text-xl font-bold text-gray-900">UnilaFest Admin</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="text-xl font-bold text-neutral-800">UnilaFest Admin</h2>
+            <p className="text-sm text-neutral-500">
               Welcome, {user?.nama || 'Admin'}
             </p>
           </div>

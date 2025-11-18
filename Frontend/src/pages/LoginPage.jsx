@@ -23,38 +23,51 @@ export default function LoginPage() {
 
     try {
       // 1. Tembak API login
+      // ================================================================
+      // PERBAIKAN DI SINI: Key harus 'password', bukan 'kata_sandi'
+      // Backend (Validator) mengharapkan key bernama 'password'
+      // ================================================================
       const response = await axiosClient.post('/login', {
         email: email,
-        kata_sandi: password,
+        password: password, // <-- INI PERBAIKANNYA (sebelumnya: kata_sandi: password)
       });
 
       // 2. Jika sukses, simpan data ke Global State & localStorage
-      const { user, token } = response.data;
-      setAuthData(user, token);
+      // Pastikan response.data memiliki 'user' dan 'access_token'
+      const user = response.data.user;
+      const token = response.data.access_token; // Pastikan key-nya 'access_token'
 
-      // 3. Cek Peran (INI PENTING UNTUK ANDA, PJ 1)
-      if (user.peran === 'Admin') {
-        // Jika Admin, lempar ke Dashboard Admin
-        navigate('/admin/dashboard');
+      if (user && token) {
+        setAuthData(user, token);
+
+        // 3. Cek Peran (INI PENTING UNTUK ANDA, PJ 1)
+        if (user.peran === 'Admin') {
+          // Jika Admin, lempar ke Dashboard Admin
+          navigate('/admin/dashboard');
+        } else {
+          // Jika User biasa, lempar ke Homepage
+          navigate('/');
+        }
       } else {
-        // Jika User biasa, lempar ke Homepage
-        navigate('/');
+         setError('Respon login tidak valid.');
       }
 
     } catch (err) {
       // 4. Jika gagal
-      if (err.response && err.response.status === 401) {
-        setError('Email atau password salah.');
+      if (err.response && (err.response.status === 401 || err.response.status === 422)) {
+        // Ambil pesan error dari backend
+        setError(err.response.data.message || 'Email atau password salah.');
       } else {
-        setError('Terjadi kesalahan. Coba lagi nanti.');
+        setError('Terjadi kesalahan jaringan. Coba lagi nanti.');
+        console.error("Login error:", err); // Tampilkan error di console
       }
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-unila-light">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <h2 className="text-center text-3xl font-bold text-gray-900">
+        <h2 className="text-center text-3xl font-bold text-unila-deep">
           Login ke UnilaFest
         </h2>
         
@@ -76,7 +89,7 @@ export default function LoginPage() {
               name="email"
               type="email"
               required
-              className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-unila focus:outline-none focus:ring-unila sm:text-sm"
               placeholder="Alamat Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -91,7 +104,7 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
-              className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-unila focus:outline-none focus:ring-unila sm:text-sm"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -102,7 +115,7 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="group relative flex w-full justify-center rounded-md border border-transparent bg-unila px-4 py-2 text-sm font-medium text-white hover:bg-unila-dark focus:outline-none focus:ring-2 focus:ring-unila focus:ring-offset-2"
             >
               Login
             </button>
@@ -111,7 +124,7 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-gray-600">
           Belum punya akun?{' '}
-          <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link to="/register" className="font-medium text-unila hover:text-unila-dark">
             Daftar di sini
           </Link>
         </p>

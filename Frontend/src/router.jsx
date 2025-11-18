@@ -1,64 +1,65 @@
 // Frontend/src/router.jsx
-
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.jsx';
+
+// --- Components & Layouts ---
 import ProtectedRoute from './components/Common/ProtectedRoute.jsx';
-import AdminLayout from './components/Common/AdminLayout.jsx'; // <-- Layout Admin
+import AdminLayout from './components/Common/AdminLayout.jsx'; // Layout Admin (Sidebar dll)
+import Layout from './components/Common/Layout.jsx'; // Layout Publik (Navbar & Footer)
 
-// --- 1. IMPORT LAYOUT BARU KITA ---
-import Layout from './components/Common/Layout.jsx'; 
-
-// Import Halaman
+// --- Pages ---
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import HomePage from './pages/HomePage.jsx';
-import AdminDashboardPage from './pages/Admin/AdminDashboardPage.jsx';
-import AdminKategoriPage from './pages/Admin/AdminKategoriPage.jsx';
 import AcaraDetailPage from './pages/AcaraDetailPage.jsx';
 import AgendaSayaPage from './pages/AgendaSayaPage.jsx';
-// (Kita mungkin butuh 'Link' untuk 404 nanti)
 
+// --- Admin Pages ---
+import AdminDashboardPage from './pages/Admin/AdminDashboardPage.jsx';
+import AdminKategoriPage from './pages/Admin/AdminKategoriPage.jsx';
 
-// Definisikan rute
 const router = createBrowserRouter([
   {
-    element: <App />, // <-- Biarkan App.jsx sebagai root
+    element: <App />, // Root element
     children: [
-      
-      // --- 2. GRUP RUTE PUBLIK (Bungkus dengan Layout) ---
+      // ====================================================
+      // 1. HALAMAN STANDALONE (Tanpa Navbar/Footer Utama)
+      // ====================================================
+      // Login & Register ditaruh di sini agar bersih
+      { path: '/login', element: <LoginPage /> },
+      { path: '/register', element: <RegisterPage /> },
+
+      // ====================================================
+      // 2. HALAMAN PUBLIK (Dengan Navbar & Footer)
+      // ====================================================
       {
-        element: <Layout />, // <-- Gunakan Layout di sini
+        element: <Layout />, // Membungkus halaman di bawahnya dengan Navbar/Footer
         children: [
           { path: '/', element: <HomePage /> },
-          { path: '/login', element: <LoginPage /> },
-          { path: '/register', element: <RegisterPage /> },
           { path: '/acara/:slug', element: <AcaraDetailPage /> },
           { path: '/agenda-saya', element: <AgendaSayaPage /> },
         ]
       },
-      // ----------------------------------------------------
 
-      // --- 3. GRUP RUTE ADMIN (Biarkan seperti ini, sudah benar) ---
+      // ====================================================
+      // 3. HALAMAN ADMIN (Protected)
+      // ====================================================
       {
-        element: <ProtectedRoute adminOnly={true} />, // Pos Satpam
+        path: '/admin', // Prefix path
+        element: <ProtectedRoute adminOnly={true} />, // Cek Login & Role
         children: [
           {
-            element: <AdminLayout />, // Bungkus dengan Layout
+            element: <AdminLayout />, // Layout Admin
             children: [
-              // Halaman-halaman ini akan muncul di <Outlet> AdminLayout
-              {
-                path: '/admin/dashboard',
-                element: <AdminDashboardPage />,
-              },
-              {
-                path: '/admin/kategori',
-                element: <AdminKategoriPage />,
-              },
+              { path: 'dashboard', element: <AdminDashboardPage /> },
+              { path: 'kategori', element: <AdminKategoriPage /> },
             ]
           }
         ]
       },
-      // (Kita bisa tambahkan rute 404 di sini nanti jika perlu)
+      
+      // Fallback untuk 404 (Opsional)
+      { path: '*', element: <div>404 Not Found</div> }
     ]
   }
 ]);

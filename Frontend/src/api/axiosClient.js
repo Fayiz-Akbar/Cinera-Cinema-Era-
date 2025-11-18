@@ -1,28 +1,27 @@
 // Frontend/src/api/axiosClient.js
+// (KODE YANG DIPERBAIKI)
 
 import axios from 'axios';
 
-// Buat instance axios
 const axiosClient = axios.create({
-  // URL dasar API Anda. Ambil dari .env jika ada,
-  // jika tidak, hardcode URL backend Laravel Anda.
-  baseURL: 'http://localhost:8000/api', // (Sesuaikan jika port beda)
-  withCredentials: true, // Izinkan pengiriman cookie (penting untuk Sanctum)
+  baseURL: 'http://localhost:8000/api',
+  withCredentials: true, // Ini sudah benar
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   }
 });
 
-// (Opsional tapi direkomendasikan) Interceptor untuk Token
-// Ini akan otomatis menambahkan token auth ke setiap request
-// setelah Anda membuat sistem login.
+/*
+// Untuk auth berbasis cookie (stateful), ini tidak diperlukan
+// dan bisa menyebabkan kebingungan.
 axiosClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('AUTH_TOKEN'); // (Nama token bisa Anda ganti)
+  const token = localStorage.getItem('AUTH_TOKEN'); 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+*/
 
 export default axiosClient;

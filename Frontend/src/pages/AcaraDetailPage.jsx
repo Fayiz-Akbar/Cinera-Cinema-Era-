@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import publicApi from "../api/publicApi";
 import registrationApi from "../api/registrationApi";
+// --- 1. IMPORT IKON (Perubahan di sini) ---
+import { FaCalendarAlt, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 
 export default function AcaraDetailPage() {
   const { slug } = useParams();
@@ -14,7 +16,7 @@ export default function AcaraDetailPage() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [registerMessage, setRegisterMessage] = useState("");
 
-  // --- LOGIKA FETCH DATA (Tidak berubah) ---
+  // --- (Logika Fetch Data dan Pendaftaran tetap sama) ---
   useEffect(() => {
     const fetchAcaraDetail = async () => {
       try {
@@ -32,7 +34,6 @@ export default function AcaraDetailPage() {
     fetchAcaraDetail();
   }, [slug]);
 
-  // --- LOGIKA PENDAFTARAN (Tidak berubah) ---
   const handleDaftar = async () => {
     setIsRegistering(true);
     setRegisterMessage("");
@@ -59,20 +60,18 @@ export default function AcaraDetailPage() {
     }
   };
 
-  // --- TAMPILAN LOADING & ERROR (Diberi style) ---
+  // --- (Tampilan Loading & Error tetap sama) ---
   if (loading) {
     return <div className="text-center py-20 text-unila-medium text-lg">Memuat detail acara...</div>;
   }
-
   if (error) {
     return <div className="text-center py-20 bg-red-100 text-red-700 rounded-lg p-8">{error}</div>;
   }
-
   if (!acara) {
     return <div className="text-center py-20 text-unila-medium text-lg">Acara tidak ditemukan.</div>;
   }
 
-  // --- 1. FUNGSI BARU: InfoBox (Komponen kecil) ---
+  // --- (Komponen InfoBox tetap sama) ---
   const InfoBox = ({ icon, title, content }) => (
     <div className="flex items-start">
       <span className="text-unila-dark text-xl mr-3 mt-1">{icon}</span>
@@ -83,7 +82,7 @@ export default function AcaraDetailPage() {
     </div>
   );
 
-  // --- 2. TAMPILAN UTAMA (AESTHETIC) ---
+  // --- (Tampilan Utama) ---
   return (
     <div className="max-w-6xl mx-auto">
       {/* Wrapper Konten Utama */}
@@ -91,7 +90,7 @@ export default function AcaraDetailPage() {
         {/* Layout Grid: 2 Kolom (Poster & Info) */}
         <div className="grid grid-cols-1 md:grid-cols-12">
           
-          {/* Kolom Kiri: Poster */}
+          {/* (Kolom Kiri: Poster tetap sama) */}
           <div className="md:col-span-5">
             <div className="w-full h-64 md:h-full bg-unila-light flex items-center justify-center">
               {acara.poster_url ? (
@@ -109,38 +108,36 @@ export default function AcaraDetailPage() {
           {/* Kolom Kanan: Detail Info & Tombol Daftar */}
           <div className="md:col-span-7 p-6 md:p-8 flex flex-col justify-between">
             <div>
-              {/* Badge Kategori */}
+              {/* (Badge Kategori dan Judul tetap sama) */}
               <span className="inline-block bg-unila-extradark text-white text-xs 
                              font-semibold px-3 py-1 rounded-full uppercase mb-2">
                 {acara.kategori.nama_kategori}
               </span>
-              
-              {/* Judul */}
               <h1 className="text-3xl md:text-4xl font-bold text-unila-deep mb-4">
                 {acara.judul}
               </h1>
 
-              {/* Info Detail (Waktu, Lokasi, Penyelenggara) */}
+              {/* --- 2. PERUBAHAN DI SINI (Emoji diganti Ikon) --- */}
               <div className="space-y-4 mb-6">
                 <InfoBox 
-                  icon="🗓️" 
+                  icon={<FaCalendarAlt />} // Ganti emoji 🗓️
                   title="Waktu" 
                   content={`${new Date(acara.waktu_mulai).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' })} WIB`} 
                 />
                 <InfoBox 
-                  icon="📍" 
+                  icon={<FaMapMarkerAlt />} // Ganti emoji 📍
                   title="Lokasi" 
                   content={acara.lokasi} 
                 />
                 <InfoBox 
-                  icon="👥" 
+                  icon={<FaUsers />} // Ganti emoji 👥
                   title="Penyelenggara" 
                   content={acara.penyelenggara.nama_penyelenggara} 
                 />
               </div>
             </div>
 
-            {/* Tombol Daftar & Pesan Status */}
+            {/* (Tombol Daftar & Pesan Status tetap sama) */}
             <div className="mt-6 md:mt-0">
               <button 
                 onClick={handleDaftar} 
@@ -163,13 +160,12 @@ export default function AcaraDetailPage() {
         </div>
       </div>
 
-      {/* Bagian Deskripsi (di bawah kartu utama) */}
+      {/* (Bagian Deskripsi & ReadMore tetap sama) */}
       <div className="bg-white rounded-lg shadow-xl mt-8 p-6 md:p-8">
         <h2 className="text-2xl font-bold text-unila-deep mb-4 pb-2 border-b border-unila-light">
           Deskripsi Acara
         </h2>
         
-        {/* Panggil ReadMore di sini */}
         <ReadMore>
           {acara.deskripsi}
         </ReadMore>
@@ -178,7 +174,7 @@ export default function AcaraDetailPage() {
   );
 }
 
-// --- 3. KOMPONEN HELPER BARU: ReadMore ---
+// (Komponen ReadMore tetap sama)
 function ReadMore({ children, maxChars = 300 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const text = children;
@@ -191,7 +187,7 @@ function ReadMore({ children, maxChars = 300 }) {
     <div>
       <p className="text-unila-dark leading-relaxed whitespace-pre-line">
         {isExpanded ? text : `${text.substring(0, maxChars)}...`}
-      </p> { /* <-- INI YANG SAYA PERBAIKI (sebelumnya </a< ) */ }
+      </p>
       <button 
         onClick={() => setIsExpanded(!isExpanded)} 
         className="text-unila-dark font-semibold hover:underline mt-2"

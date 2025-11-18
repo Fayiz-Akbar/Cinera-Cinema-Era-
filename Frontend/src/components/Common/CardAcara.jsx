@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+// --- 1. Import ikon yang kita butuhkan ---
+import { FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
 
 /**
  * Komponen Card (Kartu) yang reusable dan aesthetic
@@ -53,14 +55,17 @@ export default function CardAcara({ acara }) {
           Oleh: {acara.penyelenggara.nama_penyelenggara}
         </p>
 
+        {/* --- 2. Perubahan di sini (Emoji diganti Ikon) --- */}
         {/* Detail (Lokasi & Tanggal) */}
         <div className="border-t border-unila-light pt-3">
           <div className="flex items-center text-sm text-unila-dark mb-1">
-            <span className="mr-2">🗓️</span> {/* Emoji Tanggal */}
+            {/* Ganti emoji 🗓️ dengan ikon */}
+            <FaCalendarAlt className="mr-2 text-unila-medium" /> 
             <span>{formattedDate}</span>
           </div>
           <div className="flex items-center text-sm text-unila-dark">
-            <span className="mr-2">📍</span> {/* Emoji Lokasi */}
+            {/* Ganti emoji 📍 dengan ikon */}
+            <FaMapMarkerAlt className="mr-2 text-unila-medium" /> 
             <span>{acara.lokasi}</span>
           </div>
         </div>

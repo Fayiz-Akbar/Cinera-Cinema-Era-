@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+// Frontend/tailwind.config.js
+
+import colors from 'tailwindcss/colors'; // <-- 1. Import 'colors'
+
+>>>>>>> 4d71540ba6ce03c37bce028172f2ea014e7224f0
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -6,6 +13,7 @@ export default {
   ],
   theme: {
     extend: {
+<<<<<<< HEAD
       colors: {
         // Palet Warna UnilaFest dari Anda
         unila: {
@@ -22,6 +30,13 @@ export default {
         // Anda bisa menambahkan font kustom di sini jika ingin
         // sans: ['Inter', 'sans-serif'],
       },
+=======
+      // --- 2. Tambahkan blok ini ---
+      colors: {
+        primary: colors.sky, // Buat 'primary' sebagai alias untuk 'sky'
+      }
+      // -------------------------
+>>>>>>> 4d71540ba6ce03c37bce028172f2ea014e7224f0
     },
   },
   plugins: [],

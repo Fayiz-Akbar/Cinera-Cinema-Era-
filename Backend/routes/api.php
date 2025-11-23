@@ -13,6 +13,7 @@ use App\Http\Controllers\Submission\PenyelenggaraController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ValidasiAcaraController;
 use App\Http\Controllers\Admin\ValidasiPenyelenggaraController;
+use App\Http\Controllers\Admin\DashboardController;
 
 // ===================================================================
 // == 1. RUTE PUBLIK (WILAYAH PJ 3 - Public)
@@ -83,6 +84,8 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     // Rute CRUD Kategori
     Route::apiResource('/kategori', KategoriController::class);
     
+    // Route Dashboard Statistik
+    Route::get('/dashboard-stats', [DashboardController::class, 'index']);
     // (Opsional) Rute CRUD Pengguna & Penyelenggara penuh
     // Route::apiResource('/users', ...);
     // Route::apiResource('/penyelenggara', ...);
